@@ -1,143 +1,220 @@
-# Calculating the Cost Function in Linear Regression
+# حساب دالة التكلفة (Cost Function) في الانحدار الخطي (Linear Regression)
 
-Before updating the model parameters using **Gradient Descent**, we first need to measure how well our current model fits the training data. This measurement is called the **Cost Function**.
+قبل تحديث معاملات النموذج باستخدام **Gradient Descent**، يجب أولًا قياس مدى جودة النموذج الحالي في التنبؤ بالبيانات. ويتم ذلك باستخدام **دالة التكلفة (Cost Function)**.
 
-> **Note:** In this example, we initialize the model parameters with:
->
-> - θ₀ = 0
-> - θ₁ = 0
->
-> These are only initial values. During training, Gradient Descent will learn the best values.
+> **ملاحظة:** لا يدعم GitHub معادلات LaTeX داخل ملفات `README.md`، لذلك سيتم كتابة جميع المعادلات بصيغة نصية (Text).
 
 ---
 
-# Training Dataset
+# مثال باستخدام معادلة التوقع
 
-| x (Feature) | y (Actual Value) |
-|------------:|-----------------:|
-| 1 | 2 |
-| 2 | 3 |
-| 3 | 5 |
-| 4 | 4 |
-| 5 | 6 |
+نفترض أن معادلة التوقع هي:
 
-Number of training examples:
+```text
+h(x) = 5 + 2x
+```
+
+---
+
+## جدول البيانات
+
+| x | y (القيمة الحقيقية) |
+|--:|---------------------:|
+| 1 | 8 |
+| 2 | 10 |
+| 3 | 11 |
+| 4 | 14 |
+| 5 | 16 |
+
+---
+
+## 1. قيم معاملات النموذج (Parameters)
+
+نفترض أن النموذج تعلم القيم التالية:
+
+```text
+θ₀ = 5
+θ₁ = 2
+```
+
+لذلك تصبح معادلة التوقع:
+
+```text
+h(x) = θ₀ + θ₁x
+h(x) = 5 + 2x
+```
+
+---
+
+## 2. حساب القيم المتوقعة
+
+نطبق معادلة التوقع على كل قيمة من قيم `x`.
+
+| x | y الحقيقي | h(x) = 5 + 2x |
+|--:|----------:|--------------:|
+| 1 | 8 | 7 |
+| 2 | 10 | 9 |
+| 3 | 11 | 11 |
+| 4 | 14 | 13 |
+| 5 | 16 | 15 |
+
+---
+
+## 3. حساب الخطأ (Error)
+
+الخطأ لكل مثال يحسب بالعلاقة التالية:
+
+```text
+Error = h(x) - y
+```
+
+| x | y | h(x) | الخطأ |
+|--:|--:|------:|-------:|
+| 1 | 8 | 7 | -1 |
+| 2 | 10 | 9 | -1 |
+| 3 | 11 | 11 | 0 |
+| 4 | 14 | 13 | -1 |
+| 5 | 16 | 15 | -1 |
+
+---
+
+## 4. تربيع الخطأ
+
+لأن بعض الأخطاء سالبة وبعضها موجبة، فإننا نقوم بتربيعها حتى تصبح جميعها موجبة.
+
+| الخطأ | مربع الخطأ |
+|------:|-----------:|
+| -1 | 1 |
+| -1 | 1 |
+| 0 | 0 |
+| -1 | 1 |
+| -1 | 1 |
+
+مجموع مربعات الأخطاء:
+
+```text
+1 + 1 + 0 + 1 + 1 = 4
+```
+
+---
+
+## 5. حساب دالة التكلفة (Cost Function)
+
+معادلة دالة التكلفة في الانحدار الخطي هي:
+
+```text
+J(θ₀, θ₁) = (1 / (2m)) × Σ(h(x) - y)²
+```
+
+حيث:
+
+- `J` : قيمة دالة التكلفة.
+- `m` : عدد أمثلة التدريب.
+- `Σ` : مجموع جميع مربعات الأخطاء.
+
+في مثالنا:
 
 ```text
 m = 5
 ```
 
----
-
-# Step 1: Initialize the Parameters
+ومجموع مربعات الأخطاء:
 
 ```text
-θ₀ = 0
-θ₁ = 0
+Σ(h(x) - y)² = 4
 ```
 
-The hypothesis function is:
+إذن:
 
 ```text
-h(x) = θ₀ + θ₁ × x
+J = 4 / (2 × 5)
 ```
 
-Substituting the initial values:
+ثم:
 
 ```text
-h(x) = 0
+J = 4 / 10
 ```
 
----
-
-# Step 2: Calculate Predictions
-
-| x | Actual y | Predicted h(x) |
-|--:|---------:|---------------:|
-| 1 | 2 | 0 |
-| 2 | 3 | 0 |
-| 3 | 5 | 0 |
-| 4 | 4 | 0 |
-| 5 | 6 | 0 |
-
----
-
-# Step 3: Calculate the Absolute Error
-
-For easier understanding, we calculate the absolute error:
+وأخيرًا:
 
 ```text
-Absolute Error = |h(x) − y|
-```
-
-| x | y | h(x) | Absolute Error |
-|--:|--:|------:|---------------:|
-| 1 | 2 | 0 | 2 |
-| 2 | 3 | 0 | 3 |
-| 3 | 5 | 0 | 5 |
-| 4 | 4 | 0 | 4 |
-| 5 | 6 | 0 | 6 |
-
----
-
-# Step 4: Square the Errors
-
-| Absolute Error | Squared Error |
-|---------------:|--------------:|
-| 2 | 4 |
-| 3 | 9 |
-| 5 | 25 |
-| 4 | 16 |
-| 6 | 36 |
-
-Sum of squared errors:
-
-```text
-4 + 9 + 25 + 16 + 36 = 90
+J = 0.4
 ```
 
 ---
 
-# Step 5: Calculate the Cost Function
+# النتيجة النهائية
+
+معاملات النموذج:
 
 ```text
-                 m
-J(θ₀, θ₁) = 1/(2m) × Σ (h(xᵢ) − yᵢ)²
-                i=1
+θ₀ = 5
+θ₁ = 2
 ```
 
-Since:
+معادلة التوقع:
 
 ```text
-m = 5
+h(x) = 5 + 2x
 ```
 
-Substitute the values:
+مجموع مربعات الأخطاء:
 
 ```text
-J = 90 / (2 × 5)
+4
 ```
 
-```text
-J = 90 / 10
-```
+قيمة دالة التكلفة:
 
 ```text
-J = 9
+Cost = 0.4
 ```
 
 ---
 
-# Final Result
+# ماذا تعني قيمة Cost؟
 
-```text
-Cost = 9
-```
+كلما اقتربت قيمة **Cost** من **الصفر (0)** كان النموذج أفضل في التنبؤ.
 
-The Cost Function is **9**, indicating that the model is still making large prediction errors.
+أما إذا كانت قيمة **Cost** كبيرة، فهذا يعني أن النموذج لا يتنبأ بالبيانات بدقة، ويجب تحسين معاملات **θ₀** و **θ₁** باستخدام خوارزمية **Gradient Descent**.
 
 ---
 
-# What's Next?
+# مثال على تطابق النموذج تمامًا مع البيانات
 
-The next step is to use **Gradient Descent** to update **θ₀** and **θ₁**, reducing the Cost Function after every iteration until the model finds the best-fitting line.
+إذا كانت البيانات تقع بالكامل على الخط:
+
+```text
+y = 5 + 2x
+```
+
+فسيكون الجدول كما يلي:
+
+| x | y | h(x) |
+|--:|--:|------:|
+| 1 | 7 | 7 |
+| 2 | 9 | 9 |
+| 3 | 11 | 11 |
+| 4 | 13 | 13 |
+| 5 | 15 | 15 |
+
+جميع الأخطاء:
+
+```text
+0
+```
+
+مجموع مربعات الأخطاء:
+
+```text
+0
+```
+
+إذن:
+
+```text
+Cost = 0
+```
+
+وهذا يعني أن النموذج يطابق جميع بيانات التدريب بشكل مثالي، ولا يوجد أي خطأ في التنبؤ.
